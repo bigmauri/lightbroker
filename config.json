@@ -1,0 +1,65 @@
+{
+  "channels": [
+    {
+      "environment": "development",
+      "topic": "log",
+      "queue_size": 100
+    },
+    {
+      "environment": "development",
+      "topic": "git",
+      "queue_size": 100
+    },
+    {
+      "environment": "development",
+      "topic": "embedded",
+      "queue_size": 100
+    },
+    {
+      "environment": "staging",
+      "topic": "log",
+      "queue_size": 10
+    },
+    {
+      "environment": "production",
+      "topic": "log",
+      "queue_size": 10
+    }
+  ],
+  "subscribers": [
+    {
+      "name": "worker101",
+      "environment": "development",
+      "topic": "log"
+    },
+    {
+      "name": "worker101",
+      "environment": "development",
+      "topic": "git"
+    },
+    {
+      "name": "worker102",
+      "environment": "development",
+      "topic": "log"
+    },
+    {
+      "name": "worker103",
+      "environment": "development",
+      "topic": "log"
+    },
+    {
+      "name": "worker104",
+      "environment": "development",
+      "topic": "log"
+    }
+  ],
+  "__meta__": {
+    "server": {
+      "default_queue_size": 100
+    },
+    "agent": {
+      "base_url": "http://127.0.0.1:5555",
+      "interval": 60
+    }
+  }
+}
