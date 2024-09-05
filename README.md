@@ -1,4 +1,4 @@
-# light-broker [![GitHub tag](https://img.shields.io/github/tag/bigmauri/lightbroker.svg)](https://GitHub.com/bigmauri/lightbroker/tags/) [![GitHub commits](https://img.shields.io/github/commits-since/bigmauri/lightbroker/v0.0.1.svg)](https://GitHub.com/bigmauri/lightbroker/commit/)
+# lightbroker [![GitHub tag](https://img.shields.io/github/tag/bigmauri/lightbroker.svg)](https://GitHub.com/bigmauri/lightbroker/tags/) [![GitHub commits](https://img.shields.io/github/commits-since/bigmauri/lightbroker/v0.0.1.svg)](https://GitHub.com/bigmauri/lightbroker/commit/)
 
 ___
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
