@@ -27,8 +27,8 @@ This repository contains a Python application that can be run as either a server
 1. Clone the repository:
 
     ```
-    git clone https://github.com/your-repository.git
-    cd your-repository
+    git clone https://github.com/lightbroker.git
+    cd lightbroker
     ```
 
 2. Install the required dependencies:
