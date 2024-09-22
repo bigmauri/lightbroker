@@ -50,7 +50,7 @@ To start the application as a server, use the `--server` flag:
 python -m lightbroker --server
 ```
 
-The server will start at `http://127.0.0.1:5050` with the following endpoints:
+The server will start at `http://127.0.0.1:5555` with the following endpoints:
 
 - `GET /api/channels` Returns the current channel configurations.
 - `GET /api/channels/<environment>/<topic>/publish` Publishes a message to a specific channel.
@@ -69,13 +69,13 @@ To start the application as a agent, use the `--agent` flag:
 python -m lightbroker --agent
 ```
 
-The server will start at `http://127.0.0.1:5060` with the following endpoints:
+The server will start at `http://127.0.0.1:5556` with the following endpoints:
 
 - `GET /api/subscribers` Returns the subscribers configurations.
 - `GET /api/subscribers/stop` Stops all subscribers.
 
 
-### Running in Agent Mode
+### Exception
 
 - If you try to run with both `--server` and `--agent` flags, the application will raise an exception.
 
