@@ -34,17 +34,17 @@ if arguments.server:
 
     server = ServerApplication()
 
-    @server.route("/api/channels")
+    @server.route("/broker/api/channels")
     def channels():
         return server.to_json(server.environment, 200)
 
-    @server.route("/api/channels/<environment>/<topic>/publish")
+    @server.route("/broker/api/channels/<environment>/<topic>/publish")
     def publish(environment, topic):
         for sub, ch in server.environment["channels"][environment][topic].items():
             ch.put(request.args.get("message"))
         return server.to_json({"status": "OK", "message": "Message publish successfully"}, 200)
 
-    @server.route("/api/channels/<environment>/<topic>/get")
+    @server.route("/broker/api/channels/<environment>/<topic>/get")
     def get(environment, topic):
         subscriber_name = request.args.get("name")
         try:
@@ -59,11 +59,11 @@ if arguments.agent:
 
     agent = AgentApplication()
 
-    @agent.route("/api/subscribers")
+    @agent.route("/agent/api/subscribers")
     def subscribers():
         return agent.to_json(agent.environment, 200)
 
-    @agent.route("/api/subscribers/stop")
+    @agent.route("/agent/api/subscribers/stop")
     def stop():
         for key, value in agent.environment["subscribers"].items():
             value.stop()
