@@ -76,7 +76,7 @@ class SubscriberThread(BackgroundThread):
 
     def handle(self) -> None:
         time.sleep(self.agent_config['interval'])
-        endpoint = f"{self.agent_config['base_url']}/api/channels/{self.environment}/{self.topic}/get"
+        endpoint = f"{self.agent_config['base_url']}/broker/api/channels/{self.environment}/{self.topic}/get"
         message = requests.get(endpoint, params={"name": self.name}).json()
         print(self.name, message)
         
