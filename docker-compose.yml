@@ -1,0 +1,11 @@
+services:
+  lightbroker-server:
+    build: .
+    ports:
+      - "5555:5555"
+    command: python -m lightbroker --server
+  lightbroker-agent:
+    build: .
+    ports:
+      - "5556:5556"
+    command: python -m lightbroker --agent-server 0.0.0.0
