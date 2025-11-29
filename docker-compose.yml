@@ -10,4 +10,4 @@ services:
     container_name: lightbroker-agent
     ports:
       - "5556:5556"
-    command: python -m lightbroker --agent-server 0.0.0.0
+    command: python -m lightbroker --agent --agent-server 0.0.0.0
