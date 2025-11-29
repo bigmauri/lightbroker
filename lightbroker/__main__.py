@@ -91,4 +91,4 @@ if arguments.agent:
             value.stop()
         return agent.to_json(agent.environment, 200)
 
-    agent.run(port=5556)
+    agent.run(host="0.0.0.0", port=5556)
