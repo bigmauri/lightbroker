@@ -1,11 +1,13 @@
 services:
-  lightbroker-server:
+  server:
     build: .
+    container_name: lightbroker-server
     ports:
       - "5555:5555"
     command: python -m lightbroker --server
-  lightbroker-agent:
+  agent:
     build: .
+    container_name: lightbroker-agent
     ports:
       - "5556:5556"
     command: python -m lightbroker --agent-server 0.0.0.0
