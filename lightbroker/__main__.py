@@ -20,6 +20,11 @@ parser.add_argument(
     action="store_true",
     help="Get broker role"
 )
+parser.add_argument(
+    "--agent-server",
+        type=str,
+        help="Agent's server url"
+)
 arguments = parser.parse_args()
 
 #############################################################################
@@ -44,31 +49,46 @@ if arguments.server:
             ch.put(request.args.get("message"))
         return server.to_json({"status": "OK", "message": "Message publish successfully"}, 200)
 
+    @server.route("/broker/api/channels/<environment>/<topic>/subscribe")
+    def subscribe(environment, topic):
+        name, size = request.args.get("name"), request.args.get("size")
+        server.set_subscriber(name, environment, topic, size)
+        return server.to_json({"status": "OK", "message": f"Subscription completed to the topic '{topic}' in environment '{environment}'"}, 200)
+
     @server.route("/broker/api/channels/<environment>/<topic>/get")
     def get(environment, topic):
         subscriber_name = request.args.get("name")
         try:
-            message = f"{server.environment["channels"][environment][topic][subscriber_name].get(block=False)}"
+            message = f'{server.environment["channels"][environment][topic][subscriber_name].get(block=False)}'
         except queue.Empty:
             message = None
         return server.to_json({"status": "OK", "message": message}, 200)
 
-    server.run(port=5555)
+    server.run(host="0.0.0.0", port=5555)
 
 if arguments.agent:
+    protocol, server_url = "http", arguments.agent_server
+    agent = AgentApplication({
+            "server_url": f"{protocol}://{server_url}:5555",
+            "interval": 10
+        })
 
-    agent = AgentApplication()
-
-    @agent.route("/agent/api/subscribers")
-    def subscribers():
+    @agent.route("/agent/api/subscriptions")
+    def subscriptions():
         return agent.to_json(agent.environment, 200)
 
-    @agent.route("/agent/api/subscribers/stop")
+    @agent.route("/agent/api/subscribe")
+    def subscribe():
+        name = request.args.get("name")
+        environment = request.args.get("environment")
+        topic = request.args.get("topic")
+        agent.subscribe(name, environment, topic)
+        return agent.to_json(agent.environment, 200)
+
+    @agent.route("/agent/api/subscriptions/stop")
     def stop():
-        for key, value in agent.environment["subscribers"].items():
+        for key, value in agent.environment["subscriptions"].items():
             value.stop()
-            # if value.is_alive():
-            #     value.join() # probably this is not necessary in my case, i need just to send a call 
         return agent.to_json(agent.environment, 200)
 
     agent.run(port=5556)

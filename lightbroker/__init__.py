@@ -54,26 +54,23 @@ class ServerApplication(Application):
             if ch["topic"] not in self._ENVIRONMENT["channels"][ch["environment"]]:
                 self._ENVIRONMENT["channels"][ch["environment"]][ch["topic"]] = {}
                 self._ENVIRONMENT["channels"][ch["environment"]][ch["topic"]]["default"] = queue.LifoQueue(self._APPLICATION_CONFIGURATION["__meta__"]["server"]["default_queue_size"])
-        for subscriber in self._APPLICATION_CONFIGURATION["subscribers"]:
-            qs = [d for d in self._APPLICATION_CONFIGURATION["channels"] if d["environment"] == subscriber["environment"] and d["topic"] == subscriber["topic"]].pop()
-            self._ENVIRONMENT["channels"][subscriber["environment"]][subscriber["topic"]][subscriber["name"]] = queue.LifoQueue(qs["queue_size"])
 
+    def set_subscriber(self, name, environment, topic, size=20):
+        self._ENVIRONMENT["channels"][environment][topic][name] = queue.LifoQueue(int(size))
 
 class AgentApplication(Application):
 
-    def __init__(self):
+    def __init__(self, config):
+        self.__CONFIG = config
         super().__init__()
         self._setup()
 
     def _setup(self):
-        self._ENVIRONMENT["subscribers"] = {}
-        for sub in self._APPLICATION_CONFIGURATION["subscribers"]:
-            sub["agent_config"] = self._APPLICATION_CONFIGURATION["__meta__"]["agent"]
-            s = BackgroundThreadFactory.create('subscriber', sub)
-            self._ENVIRONMENT["subscribers"][f"{sub["name"]}-{id(s)}"] = s
-            s.start()
+        self._ENVIRONMENT["subscriptions"] = {}
 
-    # def _sync(self):
-    #     for sub in self._ENVIRONMENT["subscribers"].values():
-    #         sub.start()
-
+    def subscribe(self, name, environment, topic):
+        endpoint = f"{self.__CONFIG['server_url']}/broker/api/channels/{environment}/{topic}/subscribe"
+        response = requests.get(endpoint, params={"name": name, "size": 20}).json()
+        s = BackgroundThreadFactory.create('subscriber', name, environment, topic, self.__CONFIG)
+        self._ENVIRONMENT["subscriptions"][f'{name}-{id(s)}'] = s
+        s.start()

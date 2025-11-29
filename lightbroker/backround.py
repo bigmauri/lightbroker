@@ -76,10 +76,11 @@ class SubscriberThread(BackgroundThread):
 
     def handle(self) -> None:
         time.sleep(self.agent_config['interval'])
-        endpoint = f"{self.agent_config['base_url']}/broker/api/channels/{self.environment}/{self.topic}/get"
-        message = requests.get(endpoint, params={"name": self.name}).json()
-        print(self.name, message)
-        
+        endpoint = f"{self.agent_config['server_url']}/broker/api/channels/{self.environment}/{self.topic}/get"
+        response = requests.get(endpoint, params={"name": self.name}).json()
+        message = response["message"]
+        if message:
+            self.messages.append(response["message"])
 
     def to_dict(self):
         data = {}
@@ -94,7 +95,7 @@ class SubscriberThread(BackgroundThread):
 
 class BackgroundThreadFactory:
     @staticmethod
-    def create(thread_type: str, kwargs: dict) -> BackgroundThread:
+    def create(thread_type: str, name, environment, topic, kwargs: dict) -> BackgroundThread:
         if thread_type == 'subscriber':
-            return SubscriberThread(**kwargs)
+            return SubscriberThread(name, environment, topic, kwargs)
         raise NotImplementedError('Specified thread type is not implemented.')
