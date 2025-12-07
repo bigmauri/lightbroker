@@ -6,6 +6,7 @@ import queue
 import requests
 import threading
 import time
+import os
 
 from lightbroker.backround import BackgroundThreadFactory, SubscriberThread
 from flask import Flask, jsonify, request
@@ -25,8 +26,8 @@ class Application(Flask):
     _APPLICATION_CONFIGURATION = {}
     _ENVIRONMENT = {}
 
-    def __init__(self):
-        super().__init__(__name__)
+    def __init__(self, name, template_folder=None, static_folder=None):
+        super().__init__(name, template_folder=template_folder, static_folder=static_folder)
         self._load_configuration()
 
     @property
@@ -43,7 +44,7 @@ class Application(Flask):
 class ServerApplication(Application):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(__name__)
         self._setup()
 
     def _setup(self):
@@ -62,7 +63,11 @@ class AgentApplication(Application):
 
     def __init__(self, config):
         self.__CONFIG = config
-        super().__init__()
+        super().__init__(
+            __name__,
+            template_folder=os.path.join(os.getcwd(), "templates"),
+            static_folder=os.path.join(os.getcwd(), "static")
+            )
         self._setup()
 
     def _setup(self):

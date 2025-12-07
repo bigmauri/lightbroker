@@ -1,9 +1,12 @@
 import argparse
 import logging
 import queue
+import os
 
 from lightbroker import ServerApplication, AgentApplication
 from flask import request
+from flask import Flask, render_template, jsonify
+from flask_cors import CORS
 
 
 #############################################################################
@@ -38,6 +41,7 @@ if arguments.server and arguments.agent:
 if arguments.server:
 
     server = ServerApplication()
+    CORS(server)
 
     @server.route("/broker/api/channels")
     def channels():
@@ -64,14 +68,20 @@ if arguments.server:
             message = None
         return server.to_json({"status": "OK", "message": message}, 200)
 
-    server.run(host="0.0.0.0", port=5555)
+    server.run(host="0.0.0.0", port=5555, debug=True)
 
 if arguments.agent:
+
     protocol, server_url = "http", arguments.agent_server
     agent = AgentApplication({
             "server_url": f"{protocol}://{server_url}:5555",
             "interval": 10
         })
+    CORS(agent)
+
+    @agent.route('/')
+    def home():
+        return render_template('index.html')
 
     @agent.route("/agent/api/subscriptions")
     def subscriptions():
@@ -91,4 +101,4 @@ if arguments.agent:
             value.stop()
         return agent.to_json(agent.environment, 200)
 
-    agent.run(host="0.0.0.0", port=5556)
+    agent.run(host="0.0.0.0", port=5556, debug=True)
